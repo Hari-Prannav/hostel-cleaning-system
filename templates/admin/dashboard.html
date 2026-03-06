@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard - Hostel Management</title>
+    <style>
+        .status-pending { background-color: #ffc107; }
+        .status-assigned { background-color: #17a2b8; }
+        .status-completed { background-color: #28a745; }
+    </style>
+</head>
+<body style="font-family: Arial; padding: 20px; background-color: #f0f2f5;">
+
+    <div style="max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>System Overview: All Cleaning Requests</h2>
+            <a href="/logout" style="color: #dc3545; text-decoration: none; font-weight: bold;">Logout</a>
+        </div>
+        <hr>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #343a40; color: white; text-align: left;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Request ID</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Student</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Room</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Assigned Cleaner</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ddd;">#{{ req.id }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ req.student_name }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ req.room_no }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {{ req.cleaner_name if req.cleaner_name else "Unassigned (Pending)" }}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 0.9em; color: white;" class="{% if req.status == 'Pending' %}status-pending{% elif req.status == 'Assigned' %}status-assigned{% else %}status-completed{% endif %}">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

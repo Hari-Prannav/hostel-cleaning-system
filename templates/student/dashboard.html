@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student.css') }}">
+    <style>
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body style="font-family: Arial; background-color: #f4f7f6; padding: 20px;">
+
+    <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="{% if category == 'success' %}alert-success{% else %}alert-info{% endif %}" style="padding: 15px; margin-bottom: 20px; border-radius: 5px; border: 1px solid transparent;">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Hello, {{ session['name'] }}! 👋</h2>
+            <a href="/logout" style="color: #dc3545; text-decoration: none; font-weight: bold;">Logout</a>
+        </div>
+        <p><strong>Block:</strong> {{ session['block'] }} | <strong>Floor:</strong> {{ session['floor'] }}</p>
+        <hr>
+
+        <h3>Request Cleaning</h3>
+        <form action="/student/request" method="POST">
+            <div style="margin-bottom: 15px;">
+                <label>Select Room Number (Floor {{ session['floor'] }}):</label>
+                <select name="room_no" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="" disabled selected>-- Select Room --</option>
+                    {% set floor_prefix = session['floor']|string %}
+                    {% for i in range(1, 41) %}
+                        {# This creates 101, 102... or 201, 202... based on the floor #}
+                        {% set room_num = floor_prefix ~ "%02d"|format(i) %}
+                        <option value="{{ room_num }}">{{ room_num }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" style="width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                Confirm Request
+            </button>
+        </form>
+
+        <br>
+        <hr>
+
+        <h3>My Recent Requests</h3>
+        {% if my_requests %}
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; text-align: left;">
+                    <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Room</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in my_requests %}
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">{{ req.room_no }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                        {% if req.status == 'Cleaned' %}
+                            <span style="font-weight: bold; color: #28a745;">{{ req.status }}</span>
+                        {% elif req.status == 'Assigned' %}
+                            <span style="font-weight: bold; color: #17a2b8;">{{ req.status }}</span>
+                        {% else %}
+                            <span style="font-weight: bold; color: #ffc107;">{{ req.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #888; font-style: italic;">No cleaning requests made yet.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

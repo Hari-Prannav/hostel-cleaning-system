@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cleaner Dashboard</title>
+</head>
+<body style="font-family: Arial; padding: 20px; background-color: #f8f9fa;">
+
+    <div style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              {% if category == 'success' %}
+                <div style="padding: 15px; margin-bottom: 20px; border-radius: 5px; background-color: #d4edda; color: #155724; border: 1px solid transparent;">
+              {% else %}
+                <div style="padding: 15px; margin-bottom: 20px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460; border: 1px solid transparent;">
+              {% endif %}
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Cleaner Task List: {{ session['name'] }}</h2>
+            <a href="/logout" style="color: #dc3545; text-decoration: none; font-weight: bold;">Logout</a>
+        </div>
+        <p><strong>Block:</strong> {{ session['block'] }} | <strong>Floor:</strong> {{ session['floor'] }}</p>
+        <hr>
+
+        {% if tasks %}
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #007bff; color: white; text-align: left;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Room No</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Student Name</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Status</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ task.room_no }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ task.student_name }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {% if task.status == 'Assigned' %}
+                        <span style="padding: 5px 10px; border-radius: 4px; background-color: #ffc107; color: white; font-size: 0.9em;">
+                            {{ task.status }}
+                        </span>
+                        {% else %}
+                        <span style="padding: 5px 10px; border-radius: 4px; background-color: #28a745; color: white; font-size: 0.9em;">
+                            {{ task.status }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {% if task.status == 'Assigned' %}
+                        <form action="/cleaner/complete/{{ task.id }}" method="POST">
+                            <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                Mark Cleaned
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="color: #666;">Done</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <p style="font-size: 50px; margin: 0;">✅</p>
+            <h3>All Caught Up!</h3>
+            <p>There are no pending cleaning requests in your area right now.</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
