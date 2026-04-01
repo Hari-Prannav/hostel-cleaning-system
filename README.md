@@ -12,8 +12,6 @@ A web application that enables hostel students to raise room cleaning requests o
 | Auth         | Flask-Login 0.6.3                   |
 | Templating   | Jinja2 3.1.6                        |
 | Frontend     | HTML, CSS (static assets)           |
-| Security     | Werkzeug 3.1.6, itsdangerous 2.2.0  |
-| Utilities    | Blinker, Click, Colorama            |
 
 ---
 
